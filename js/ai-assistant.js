@@ -1,12 +1,8 @@
 /**
- * Помощник Huggies: ответы через DeepSeek API; без ключа — локальная база.
- * Укажите ключ ниже (platform.deepseek.com). Для публичного репозитория лучше прокси на сервере.
+ * Помощник Huggies: локальная база ответов в браузере (без сетевых запросов).
  */
 (function () {
   "use strict";
-
-  var DEEPSEEK_API_KEY = "";
-  var DEEPSEEK_MODEL = "deepseek-chat";
 
   const mascot = document.getElementById("mascot-trigger");
   const chatOverlay = document.getElementById("chat-overlay");
@@ -14,12 +10,6 @@
   const messagesEl = document.getElementById("chat-messages");
   const inputEl = document.getElementById("chat-input");
   const sendBtn = document.getElementById("chat-send");
-
-  var dsThread = [];
-
-  var SYSTEM_PROMPT =
-    "Ты вежливый помощник по бренду подгузников Huggies (демо-сайт). Отвечай по-русски, кратко (2–6 предложений), без выдуманных медицинских диагнозов. " +
-    "При симптомах болезни направляй к педиатру. Не обещай цены и наличие в магазинах. Если вопрос не про уход за малышом или подгузники — мягко верни тему к уходу и подгузникам.";
 
   /** Нормализация для поиска: нижний регистр, ё → е */
   function normalize(text) {
@@ -52,7 +42,7 @@
   }
 
   /**
-   * База знаний: фразы (точное вхождение в вопрос) и/или ключевые слова (минимум minHits совпадений).
+   * База знаний: фразы (точное вхождение в вопрос) и/или набор слов (минимум minHits совпадений).
    */
   const KNOWLEDGE = [
     {
@@ -221,7 +211,7 @@
     {
       re: /что ты умеешь|что умеешь|помощь|help|как пользоваться/,
       answer:
-        "Я подбираю ответ из базы знаний по ключевым словам. Спросите, например, про размер, протечки, ночную линейку, новорожденных или раздражение кожи — или нажмите один из примеров в переписке выше.",
+        "Я подбираю ответ из базы по вашему вопросу. Спросите, например, про размер, протечки, ночную линейку, новорожденных или раздражение кожи — или нажмите один из примеров в переписке выше.",
     },
   ];
 
@@ -332,50 +322,6 @@
     if (t) t.remove();
   }
 
-  function hasDeepSeek() {
-    return typeof DEEPSEEK_API_KEY === "string" && DEEPSEEK_API_KEY.replace(/\s/g, "").length > 8;
-  }
-
-  function trimDsThread() {
-    var max = 24;
-    if (dsThread.length > max) {
-      dsThread = dsThread.slice(dsThread.length - max);
-    }
-  }
-
-  function fetchDeepSeekReply() {
-    var messages = [{ role: "system", content: SYSTEM_PROMPT }].concat(dsThread);
-    return fetch("https://api.deepseek.com/chat/completions", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: "Bearer " + DEEPSEEK_API_KEY.trim(),
-      },
-      body: JSON.stringify({
-        model: DEEPSEEK_MODEL,
-        messages: messages,
-        max_tokens: 700,
-        temperature: 0.55,
-      }),
-    }).then(function (res) {
-      return res.json().then(function (data) {
-        if (!res.ok) {
-          var errMsg = "Ошибка API";
-          if (data.error) {
-            if (typeof data.error === "string") errMsg = data.error;
-            else if (data.error.message) errMsg = data.error.message;
-          } else if (res.statusText) errMsg = res.statusText;
-          throw new Error(errMsg);
-        }
-        var ch = data.choices && data.choices[0];
-        if (!ch || !ch.message || !ch.message.content) {
-          throw new Error("Пустой ответ");
-        }
-        return String(ch.message.content).trim();
-      });
-    });
-  }
-
   var QUICK_QUESTIONS = [
     "Как подобрать размер подгузника?",
     "Подгузник протекает — что делать?",
@@ -430,29 +376,6 @@
     if (inputEl) inputEl.value = "";
 
     showTyping();
-
-    if (hasDeepSeek()) {
-      dsThread.push({ role: "user", content: text });
-      trimDsThread();
-      fetchDeepSeekReply()
-        .then(function (reply) {
-          hideTyping();
-          dsThread.push({ role: "assistant", content: reply });
-          trimDsThread();
-          appendMsg(reply, "bot");
-        })
-        .catch(function () {
-          hideTyping();
-          dsThread.pop();
-          appendMsg(replyToQuestion(text), "bot");
-        })
-        .finally(function () {
-          sending = false;
-          if (sendBtn) sendBtn.disabled = false;
-          if (inputEl) inputEl.focus();
-        });
-      return;
-    }
 
     var delay = 320 + Math.floor(Math.random() * 280);
     window.setTimeout(function () {
