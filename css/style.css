@@ -386,8 +386,9 @@ a:hover {
   align-items: flex-end;
   justify-content: flex-end;
   padding: 1rem;
-  padding-top: max(0.75rem, env(safe-area-inset-top, 0px));
-  padding-bottom: calc(220px + env(safe-area-inset-bottom, 0px));
+  /* Запас сверху, чтобы панель не упиралась в край экрана / статус-бар */
+  padding-top: max(1.25rem, env(safe-area-inset-top, 0px), 8vh);
+  padding-bottom: calc(200px + env(safe-area-inset-bottom, 0px));
   box-sizing: border-box;
 }
 
@@ -398,8 +399,11 @@ a:hover {
 .chat-panel {
   width: 100%;
   max-width: 400px;
-  /* Не выше верхнего края экрана: запас под safe area, отступ сверху и низ под маскота */
-  height: min(520px, calc(100vh - 260px));
+  /* Укладывается в экран; dvh — мобильный UI (адресная строка) */
+  height: min(480px, calc(100vh - 300px));
+  max-height: calc(100vh - 300px);
+  height: min(480px, calc(100dvh - 300px));
+  max-height: calc(100dvh - 300px);
   min-height: 0;
   background: #fff;
   border-radius: var(--radius);
@@ -530,44 +534,8 @@ a:hover {
 }
 
 .chat-settings__intro {
-  margin: 0 0 0.5rem;
+  margin: 0;
   line-height: 1.35;
-}
-
-.chat-api-row {
-  margin-top: 0.35rem;
-  padding-top: 0.35rem;
-  border-top: 1px dashed rgba(0, 0, 0, 0.12);
-}
-
-.chat-api-label {
-  display: block;
-  margin-bottom: 0.25rem;
-  font-weight: 600;
-  color: #553;
-}
-
-.chat-api-row input[type="password"] {
-  width: 100%;
-  padding: 6px 8px;
-  border: 1px solid #ccc;
-  border-radius: 6px;
-  font-size: 0.78rem;
-  box-sizing: border-box;
-}
-
-.chat-api-check {
-  display: flex;
-  align-items: flex-start;
-  gap: 0.35rem;
-  margin: 0.4rem 0 0;
-  cursor: pointer;
-  font-size: 0.72rem;
-  line-height: 1.3;
-}
-
-.chat-api-check input {
-  margin-top: 0.15rem;
 }
 
 .site-footer {

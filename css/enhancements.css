@@ -251,14 +251,15 @@ img.ui-icon {
     align-items: flex-end;
     justify-content: stretch;
     padding: 0;
-    padding-top: max(0.5rem, env(safe-area-inset-top, 0px));
-    padding-bottom: calc(200px + var(--safe-bottom));
+    padding-top: max(0.75rem, env(safe-area-inset-top, 0px), 6vh);
+    padding-bottom: calc(190px + var(--safe-bottom));
   }
 
   .chat-panel {
     max-width: none;
     width: 100%;
-    height: min(520px, calc(100vh - 220px));
+    height: min(72dvh, calc(100dvh - 280px));
+    max-height: calc(100dvh - 280px);
     min-height: 0;
     border-radius: 16px 16px 0 0;
   }

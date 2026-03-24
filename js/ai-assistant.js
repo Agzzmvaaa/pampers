@@ -1,8 +1,12 @@
 /**
- * Помощник Huggies: локальная база + опционально Google Gemini (ключ в браузере).
+ * Помощник Huggies: ответы через DeepSeek API; без ключа — локальная база.
+ * Укажите ключ ниже (platform.deepseek.com). Для публичного репозитория лучше прокси на сервере.
  */
 (function () {
   "use strict";
+
+  var DEEPSEEK_API_KEY = "";
+  var DEEPSEEK_MODEL = "deepseek-chat";
 
   const mascot = document.getElementById("mascot-trigger");
   const chatOverlay = document.getElementById("chat-overlay");
@@ -10,13 +14,8 @@
   const messagesEl = document.getElementById("chat-messages");
   const inputEl = document.getElementById("chat-input");
   const sendBtn = document.getElementById("chat-send");
-  const apiKeyEl = document.getElementById("chat-api-key");
-  const useAiEl = document.getElementById("chat-use-ai");
 
-  const LS_API = "huggies_gemini_api_key";
-  const LS_USE_AI = "huggies_use_gemini";
-  const GEMINI_MODEL = "gemini-2.0-flash";
-  var geminiThread = [];
+  var dsThread = [];
 
   var SYSTEM_PROMPT =
     "Ты вежливый помощник по бренду подгузников Huggies (демо-сайт). Отвечай по-русски, кратко (2–6 предложений), без выдуманных медицинских диагнозов. " +
@@ -333,78 +332,46 @@
     if (t) t.remove();
   }
 
-  function loadApiPrefs() {
-    try {
-      if (apiKeyEl && localStorage.getItem(LS_API)) {
-        apiKeyEl.value = localStorage.getItem(LS_API);
-      }
-      if (useAiEl) {
-        var u = localStorage.getItem(LS_USE_AI);
-        useAiEl.checked = u !== "0";
-      }
-    } catch (e) {}
+  function hasDeepSeek() {
+    return typeof DEEPSEEK_API_KEY === "string" && DEEPSEEK_API_KEY.replace(/\s/g, "").length > 8;
   }
 
-  function saveApiPrefs() {
-    try {
-      if (apiKeyEl) localStorage.setItem(LS_API, apiKeyEl.value.trim());
-      if (useAiEl) localStorage.setItem(LS_USE_AI, useAiEl.checked ? "1" : "0");
-    } catch (e) {}
-  }
-
-  function wantsGemini() {
-    var key = apiKeyEl && apiKeyEl.value.trim();
-    return !!(useAiEl && useAiEl.checked && key && key.length > 10);
-  }
-
-  function buildGeminiContents(history) {
+  function trimDsThread() {
     var max = 24;
-    var slice = history.length > max ? history.slice(history.length - max) : history;
-    return slice.map(function (m) {
-      return {
-        role: m.role === "model" ? "model" : "user",
-        parts: [{ text: m.text }],
-      };
-    });
+    if (dsThread.length > max) {
+      dsThread = dsThread.slice(dsThread.length - max);
+    }
   }
 
-  function fetchGeminiReply(history, apiKey) {
-    var url =
-      "https://generativelanguage.googleapis.com/v1beta/models/" +
-      GEMINI_MODEL +
-      ":generateContent?key=" +
-      encodeURIComponent(apiKey);
-
-    var body = {
-      systemInstruction: { parts: [{ text: SYSTEM_PROMPT }] },
-      contents: buildGeminiContents(history),
-      generationConfig: {
-        maxOutputTokens: 700,
-        temperature: 0.55,
-      },
-    };
-
-    return fetch(url, {
+  function fetchDeepSeekReply() {
+    var messages = [{ role: "system", content: SYSTEM_PROMPT }].concat(dsThread);
+    return fetch("https://api.deepseek.com/chat/completions", {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(body),
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: "Bearer " + DEEPSEEK_API_KEY.trim(),
+      },
+      body: JSON.stringify({
+        model: DEEPSEEK_MODEL,
+        messages: messages,
+        max_tokens: 700,
+        temperature: 0.55,
+      }),
     }).then(function (res) {
       return res.json().then(function (data) {
         if (!res.ok) {
-          var msg =
-            (data.error && data.error.message) || res.statusText || "Ошибка API";
-          throw new Error(msg);
+          var errMsg = "Ошибка API";
+          if (data.error) {
+            if (typeof data.error === "string") errMsg = data.error;
+            else if (data.error.message) errMsg = data.error.message;
+          } else if (res.statusText) errMsg = res.statusText;
+          throw new Error(errMsg);
         }
-        var cand = data.candidates && data.candidates[0];
-        if (!cand || !cand.content || !cand.content.parts || !cand.content.parts[0]) {
-          if (data.promptFeedback && data.promptFeedback.blockReason) {
-            throw new Error("Запрос отклонен фильтром безопасности.");
-          }
-          throw new Error("Пустой ответ модели.");
+        var ch = data.choices && data.choices[0];
+        if (!ch || !ch.message || !ch.message.content) {
+          throw new Error("Пустой ответ");
         }
-        var text = cand.content.parts[0].text;
-        if (!text || !String(text).trim()) throw new Error("Пустой текст ответа.");
-        return String(text).trim();
+        return String(ch.message.content).trim();
       });
     });
   }
@@ -464,31 +431,20 @@
 
     showTyping();
 
-    var useGen = wantsGemini();
-    var apiKey = apiKeyEl && apiKeyEl.value.trim();
-
-    if (useGen && apiKey) {
-      geminiThread.push({ role: "user", text: text });
-      fetchGeminiReply(geminiThread, apiKey)
+    if (hasDeepSeek()) {
+      dsThread.push({ role: "user", content: text });
+      trimDsThread();
+      fetchDeepSeekReply()
         .then(function (reply) {
           hideTyping();
-          geminiThread.push({ role: "model", text: reply });
-          if (geminiThread.length > 32) {
-            geminiThread = geminiThread.slice(geminiThread.length - 32);
-          }
+          dsThread.push({ role: "assistant", content: reply });
+          trimDsThread();
           appendMsg(reply, "bot");
         })
-        .catch(function (err) {
+        .catch(function () {
           hideTyping();
-          geminiThread.pop();
-          var fallback = replyToQuestion(text);
-          appendMsg(
-            fallback +
-              "\n\n— Нейросеть недоступна: " +
-              (err && err.message ? err.message : "ошибка") +
-              ". Показан ответ из локальной базы.",
-            "bot"
-          );
+          dsThread.pop();
+          appendMsg(replyToQuestion(text), "bot");
         })
         .finally(function () {
           sending = false;
@@ -517,24 +473,14 @@
       }
     });
   }
-  if (apiKeyEl) {
-    apiKeyEl.addEventListener("change", saveApiPrefs);
-    apiKeyEl.addEventListener("blur", saveApiPrefs);
-  }
-  if (useAiEl) {
-    useAiEl.addEventListener("change", saveApiPrefs);
-  }
-
   if (messagesEl) {
     messagesEl.setAttribute("aria-live", "polite");
     messagesEl.setAttribute("aria-relevant", "additions");
   }
 
-  loadApiPrefs();
-
   if (messagesEl && messagesEl.children.length === 0) {
     appendMsg(
-      "Здравствуйте! Я отвечу из локальной базы или через нейросеть Gemini, если вверху указан ключ Google AI и включен переключатель. Ключ хранится только в вашем браузере. Советы не заменяют консультацию врача.",
+      "Здравствуйте! Задайте вопрос о подгузниках и уходе за малышом — постараюсь кратко подсказать.",
       "bot"
     );
   }
