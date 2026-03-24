@@ -1,5 +1,5 @@
 /**
- * Scroll reveals, mobile nav, scroll-buddy peek, reduced motion support
+ * Scroll reveals, mobile nav, reduced motion support
  */
 (function () {
   var reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
@@ -60,24 +60,6 @@
     document.querySelectorAll("[data-reveal]").forEach(function (el) {
       el.classList.add("reveal--visible");
     });
-  }
-
-  /* Buddy peek (ребенок сбоку) */
-  var buddy = document.getElementById("scroll-buddy");
-  var buddyTrigger = document.getElementById("buddy-trigger");
-  if (buddy && buddyTrigger && "IntersectionObserver" in window && !reduceMotion) {
-    var bio = new IntersectionObserver(
-      function (entries) {
-        entries.forEach(function (en) {
-          if (en.isIntersecting) buddy.classList.add("scroll-buddy--visible");
-          else buddy.classList.remove("scroll-buddy--visible");
-        });
-      },
-      { threshold: 0.15 }
-    );
-    bio.observe(buddyTrigger);
-  } else if (buddy) {
-    buddy.classList.add("scroll-buddy--visible");
   }
 
 })();

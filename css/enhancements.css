@@ -113,51 +113,6 @@
   transform: none;
 }
 
-/* Scroll buddy — ребенок выглядывает слева */
-.scroll-buddy {
-  position: fixed;
-  left: 0;
-  bottom: calc(210px + var(--safe-bottom));
-  z-index: 850;
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  padding: 10px 14px 10px 10px;
-  background: #fff;
-  border-radius: 0 20px 20px 0;
-  box-shadow: 0 10px 36px rgba(0, 102, 179, 0.22);
-  transform: translateX(-110%);
-  transition: transform 0.55s cubic-bezier(0.22, 1, 0.36, 1);
-  max-width: min(240px, 78vw);
-  pointer-events: none;
-}
-
-.scroll-buddy--visible {
-  transform: translateX(0);
-}
-
-.scroll-buddy img {
-  width: 48px;
-  height: 48px;
-  flex-shrink: 0;
-}
-
-.scroll-buddy p {
-  margin: 0;
-  font-size: 0.82rem;
-  font-weight: 600;
-  color: var(--huggies-deep);
-  line-height: 1.3;
-}
-
-@media (max-width: 720px) {
-  .scroll-buddy {
-    bottom: calc(190px + var(--safe-bottom));
-    max-width: 200px;
-    font-size: 0.75rem;
-  }
-}
-
 /* Product card extra interactivity */
 .product-card {
   position: relative;
@@ -244,11 +199,6 @@ img.ui-icon {
   border-radius: 18px;
   box-shadow: 0 2px 14px rgba(0, 82, 140, 0.1);
   box-sizing: border-box;
-}
-
-.scroll-buddy img.ui-icon {
-  width: 52px !important;
-  height: 52px !important;
 }
 
 /* Чат: быстрые вопросы внутри ленты сообщений (не отдельная шапка панели) */
@@ -379,9 +329,4 @@ body {
 .reduce-motion .story-viewer .bar-fill {
   animation: none !important;
   width: 100% !important;
-}
-
-.reduce-motion .buddy-peek,
-.reduce-motion .scroll-buddy {
-  transition: none !important;
 }
