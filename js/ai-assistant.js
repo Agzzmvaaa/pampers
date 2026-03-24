@@ -1,6 +1,5 @@
 /**
- * Помощник Huggies: локальная база вопросов и ответов + сопоставление по фразам и ключевым словам.
- * Работает без сервера и API (статический прототип).
+ * Помощник Huggies: локальная база + опционально Google Gemini (ключ в браузере).
  */
 (function () {
   "use strict";
@@ -11,6 +10,17 @@
   const messagesEl = document.getElementById("chat-messages");
   const inputEl = document.getElementById("chat-input");
   const sendBtn = document.getElementById("chat-send");
+  const apiKeyEl = document.getElementById("chat-api-key");
+  const useAiEl = document.getElementById("chat-use-ai");
+
+  const LS_API = "huggies_gemini_api_key";
+  const LS_USE_AI = "huggies_use_gemini";
+  const GEMINI_MODEL = "gemini-2.0-flash";
+  var geminiThread = [];
+
+  var SYSTEM_PROMPT =
+    "Ты вежливый помощник по бренду подгузников Huggies (демо-сайт). Отвечай по-русски, кратко (2–6 предложений), без выдуманных медицинских диагнозов. " +
+    "При симптомах болезни направляй к педиатру. Не обещай цены и наличие в магазинах. Если вопрос не про уход за малышом или подгузники — мягко верни тему к уходу и подгузникам.";
 
   /** Нормализация для поиска: нижний регистр, ё → е */
   function normalize(text) {
@@ -323,6 +333,82 @@
     if (t) t.remove();
   }
 
+  function loadApiPrefs() {
+    try {
+      if (apiKeyEl && localStorage.getItem(LS_API)) {
+        apiKeyEl.value = localStorage.getItem(LS_API);
+      }
+      if (useAiEl) {
+        var u = localStorage.getItem(LS_USE_AI);
+        useAiEl.checked = u !== "0";
+      }
+    } catch (e) {}
+  }
+
+  function saveApiPrefs() {
+    try {
+      if (apiKeyEl) localStorage.setItem(LS_API, apiKeyEl.value.trim());
+      if (useAiEl) localStorage.setItem(LS_USE_AI, useAiEl.checked ? "1" : "0");
+    } catch (e) {}
+  }
+
+  function wantsGemini() {
+    var key = apiKeyEl && apiKeyEl.value.trim();
+    return !!(useAiEl && useAiEl.checked && key && key.length > 10);
+  }
+
+  function buildGeminiContents(history) {
+    var max = 24;
+    var slice = history.length > max ? history.slice(history.length - max) : history;
+    return slice.map(function (m) {
+      return {
+        role: m.role === "model" ? "model" : "user",
+        parts: [{ text: m.text }],
+      };
+    });
+  }
+
+  function fetchGeminiReply(history, apiKey) {
+    var url =
+      "https://generativelanguage.googleapis.com/v1beta/models/" +
+      GEMINI_MODEL +
+      ":generateContent?key=" +
+      encodeURIComponent(apiKey);
+
+    var body = {
+      systemInstruction: { parts: [{ text: SYSTEM_PROMPT }] },
+      contents: buildGeminiContents(history),
+      generationConfig: {
+        maxOutputTokens: 700,
+        temperature: 0.55,
+      },
+    };
+
+    return fetch(url, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(body),
+    }).then(function (res) {
+      return res.json().then(function (data) {
+        if (!res.ok) {
+          var msg =
+            (data.error && data.error.message) || res.statusText || "Ошибка API";
+          throw new Error(msg);
+        }
+        var cand = data.candidates && data.candidates[0];
+        if (!cand || !cand.content || !cand.content.parts || !cand.content.parts[0]) {
+          if (data.promptFeedback && data.promptFeedback.blockReason) {
+            throw new Error("Запрос отклонен фильтром безопасности.");
+          }
+          throw new Error("Пустой ответ модели.");
+        }
+        var text = cand.content.parts[0].text;
+        if (!text || !String(text).trim()) throw new Error("Пустой текст ответа.");
+        return String(text).trim();
+      });
+    });
+  }
+
   var QUICK_QUESTIONS = [
     "Как подобрать размер подгузника?",
     "Подгузник протекает — что делать?",
@@ -378,7 +464,41 @@
 
     showTyping();
 
-    var delay = 380 + Math.floor(Math.random() * 420);
+    var useGen = wantsGemini();
+    var apiKey = apiKeyEl && apiKeyEl.value.trim();
+
+    if (useGen && apiKey) {
+      geminiThread.push({ role: "user", text: text });
+      fetchGeminiReply(geminiThread, apiKey)
+        .then(function (reply) {
+          hideTyping();
+          geminiThread.push({ role: "model", text: reply });
+          if (geminiThread.length > 32) {
+            geminiThread = geminiThread.slice(geminiThread.length - 32);
+          }
+          appendMsg(reply, "bot");
+        })
+        .catch(function (err) {
+          hideTyping();
+          geminiThread.pop();
+          var fallback = replyToQuestion(text);
+          appendMsg(
+            fallback +
+              "\n\n— Нейросеть недоступна: " +
+              (err && err.message ? err.message : "ошибка") +
+              ". Показан ответ из локальной базы.",
+            "bot"
+          );
+        })
+        .finally(function () {
+          sending = false;
+          if (sendBtn) sendBtn.disabled = false;
+          if (inputEl) inputEl.focus();
+        });
+      return;
+    }
+
+    var delay = 320 + Math.floor(Math.random() * 280);
     window.setTimeout(function () {
       hideTyping();
       appendMsg(replyToQuestion(text), "bot");
@@ -397,15 +517,24 @@
       }
     });
   }
+  if (apiKeyEl) {
+    apiKeyEl.addEventListener("change", saveApiPrefs);
+    apiKeyEl.addEventListener("blur", saveApiPrefs);
+  }
+  if (useAiEl) {
+    useAiEl.addEventListener("change", saveApiPrefs);
+  }
 
   if (messagesEl) {
     messagesEl.setAttribute("aria-live", "polite");
     messagesEl.setAttribute("aria-relevant", "additions");
   }
 
+  loadApiPrefs();
+
   if (messagesEl && messagesEl.children.length === 0) {
     appendMsg(
-      "Здравствуйте! Я помощник по типовым вопросам о подгузниках и уходе. Можете нажать пример ниже или написать вопрос своими словами. Советы не заменяют консультацию врача.",
+      "Здравствуйте! Я отвечу из локальной базы или через нейросеть Gemini, если вверху указан ключ Google AI и включен переключатель. Ключ хранится только в вашем браузере. Советы не заменяют консультацию врача.",
       "bot"
     );
   }
