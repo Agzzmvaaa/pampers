@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>Продукты — Huggies</title>
+  <link rel="stylesheet" href="css/style.css" />
+  <link rel="stylesheet" href="css/enhancements.css" />
+</head>
+<body>
+  <header class="site-header site-header--sticky">
+    <div class="site-header__inner">
+      <div class="logo">
+        Huggies
+        <span>мягкость и защита каждый день</span>
+      </div>
+      <button type="button" id="nav-burger" class="nav-burger" aria-label="Открыть меню" aria-expanded="false" aria-controls="nav-panel">
+        <img src="images/icons/menu.png" width="28" height="28" alt="" decoding="async" />
+      </button>
+      <nav id="nav-panel" class="nav nav-panel">
+        <a href="index.html">Главная</a>
+        <a href="products.html">Продукты</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="wrap">
+    <div class="page-hero" data-reveal>
+      <h1>Выберите линейку</h1>
+      <p>Подберите вариант под возраст малыша и ваши задачи — день, ночь или первые недели дома.</p>
+    </div>
+    <div class="products-grid">
+      <article class="product-card" data-reveal data-reveal-delay="0">
+        <img src="images/product-newborn.png" alt="Спящий младенец в вязаной шапочке с ушками" width="400" height="267" loading="lazy" decoding="async" />
+        <div class="body">
+          <h3>Для новорожденных</h3>
+          <p>Мягкие решения для первых недель: нежный контакт с кожей.</p>
+          <a class="btn" href="product-newborn.html">Узнать подробнее</a>
+        </div>
+      </article>
+      <article class="product-card" data-reveal data-reveal-delay="90">
+        <img src="https://images.unsplash.com/photo-1522771739844-6a9f6d5f14af?w=600&q=80" alt="" width="400" height="180" loading="lazy" />
+        <div class="body">
+          <h3>Для активных малышей</h3>
+          <p>Посадка под движение: ползание, игры, первые шаги.</p>
+          <a class="btn" href="product-active.html">Узнать подробнее</a>
+        </div>
+      </article>
+      <article class="product-card" data-reveal data-reveal-delay="180">
+        <img src="https://images.unsplash.com/photo-1515488042361-ee00e0ddd4e4?w=600&q=80" alt="" width="400" height="180" loading="lazy" />
+        <div class="body">
+          <h3>Ночная защита</h3>
+          <p>Дополнительная впитываемость для длинного сна.</p>
+          <a class="btn" href="product-night.html">Узнать подробнее</a>
+        </div>
+      </article>
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <a href="index.html">← На главную</a>
+    <div class="flaticon-credit">Иконки: <a href="https://www.flaticon.com/" rel="noopener noreferrer" target="_blank">Flaticon</a></div>
+  </footer>
+
+  <div id="mascot-trigger" class="mascot mascot-brand" role="button" tabindex="0" aria-label="Задать вопрос помощнику Huggies">
+    <div class="mascot-fab">
+      <div class="mascot-brand__frame">
+        <img src="images/mascot.png" width="168" height="168" alt="" loading="eager" decoding="async" fetchpriority="high" />
+      </div>
+      <span class="mascot-fab__label">Задать вопрос</span>
+    </div>
+  </div>
+
+  <div id="chat-overlay" class="chat-overlay">
+    <div class="chat-panel" role="dialog" aria-labelledby="chat-title">
+      <div class="chat-header">
+        <div>
+          <h3 id="chat-title">Помощник Huggies</h3>
+          <small>Ответы об уходе и подгузниках</small>
+        </div>
+        <button type="button" id="chat-close" aria-label="Закрыть">×</button>
+      </div>
+      <div class="chat-settings">
+        Задайте вопрос о размерах или уходе. Ответы носят общий характер и не заменяют консультацию врача.
+      </div>
+      <div id="chat-messages" class="chat-messages"></div>
+      <div class="chat-input-row">
+        <input type="text" id="chat-input" placeholder="Напишите вопрос…" maxlength="2000" autocomplete="off" />
+        <button type="button" id="chat-send">Отправить</button>
+      </div>
+      <p class="chat-footer-note">Информация не является медицинской рекомендацией. При жалобах на здоровье малыша обратитесь к врачу.</p>
+    </div>
+  </div>
+
+  <script src="js/interactions.js"></script>
+  <script src="js/ai-assistant.js"></script>
+  <script>
+    document.getElementById("mascot-trigger").addEventListener("keydown", function (e) {
+      if (e.key === "Enter" || e.key === " ") { e.preventDefault(); this.click(); }
+    });
+  </script>
+</body>
+</html>

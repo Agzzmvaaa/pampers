@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>Ночная защита — Huggies</title>
+  <link rel="stylesheet" href="css/style.css" />
+  <link rel="stylesheet" href="css/enhancements.css" />
+</head>
+<body>
+  <header class="site-header site-header--sticky">
+    <div class="site-header__inner">
+      <div class="logo">Huggies <span>спокойная ночь</span></div>
+      <button type="button" id="nav-burger" class="nav-burger" aria-label="Открыть меню" aria-expanded="false" aria-controls="nav-panel">
+        <img src="images/icons/menu.png" width="28" height="28" alt="" decoding="async" />
+      </button>
+      <nav id="nav-panel" class="nav nav-panel">
+        <a href="index.html">Главная</a>
+        <a href="products.html">Продукты</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="wrap">
+    <p class="breadcrumb" data-reveal><a href="index.html">Главная</a> · <a href="products.html">Продукты</a> · Ночная защита</p>
+    <div class="product-detail" data-reveal data-reveal-delay="60">
+      <img src="https://images.unsplash.com/photo-1515488042361-ee00e0ddd4e4?w=900&q=80" alt="Ночная защита" width="600" height="380" loading="lazy" />
+      <div>
+        <h1>Ночная защита</h1>
+        <p class="lead">
+          Ночью хочется меньше беспокойных пробуждений из‑за протечек. Усиленная впитываемость помогает сохранить сухость
+          дольше — в меру режима сна и питания малыша.
+        </p>
+        <p class="lead">
+          Перед сном проверьте посадку и размер. При частых ночных протечках попробуйте соседний размер или смену
+          перед сном по рекомендации педиатра.
+        </p>
+        <p><a class="btn" href="products.html">← Все линейки</a></p>
+      </div>
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    © Huggies
+    <div class="flaticon-credit">Иконки: <a href="https://www.flaticon.com/" rel="noopener noreferrer" target="_blank">Flaticon</a></div>
+  </footer>
+
+  <div id="mascot-trigger" class="mascot mascot-brand" role="button" tabindex="0" aria-label="Задать вопрос помощнику Huggies">
+    <div class="mascot-fab">
+      <div class="mascot-brand__frame">
+        <img src="images/mascot.png" width="168" height="168" alt="" loading="eager" decoding="async" fetchpriority="high" />
+      </div>
+      <span class="mascot-fab__label">Задать вопрос</span>
+    </div>
+  </div>
+
+  <div id="chat-overlay" class="chat-overlay">
+    <div class="chat-panel" role="dialog" aria-labelledby="chat-title">
+      <div class="chat-header">
+        <div>
+          <h3 id="chat-title">Помощник Huggies</h3>
+          <small>Ответы об уходе и подгузниках</small>
+        </div>
+        <button type="button" id="chat-close" aria-label="Закрыть">×</button>
+      </div>
+      <div class="chat-settings">
+        Задайте вопрос о размерах или уходе. Ответы носят общий характер и не заменяют консультацию врача.
+      </div>
+      <div id="chat-messages" class="chat-messages"></div>
+      <div class="chat-input-row">
+        <input type="text" id="chat-input" placeholder="Напишите вопрос…" maxlength="2000" autocomplete="off" />
+        <button type="button" id="chat-send">Отправить</button>
+      </div>
+      <p class="chat-footer-note">Информация не является медицинской рекомендацией. При жалобах на здоровье малыша обратитесь к врачу.</p>
+    </div>
+  </div>
+
+  <script src="js/interactions.js"></script>
+  <script src="js/ai-assistant.js"></script>
+  <script>
+    document.getElementById("mascot-trigger").addEventListener("keydown", function (e) {
+      if (e.key === "Enter" || e.key === " ") { e.preventDefault(); this.click(); }
+    });
+  </script>
+</body>
+</html>

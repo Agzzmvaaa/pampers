@@ -1,0 +1,387 @@
+/* Адаптив, интерактив, Flaticon-иконки в UI — подключать после style.css */
+
+:root {
+  --header-h: 64px;
+  --mascot-size: clamp(72px, 18vw, 104px);
+  --safe-bottom: env(safe-area-inset-bottom, 0px);
+}
+
+.site-header {
+  min-height: var(--header-h);
+  display: flex;
+  align-items: center;
+}
+
+/* --- Header: desktop + mobile burger --- */
+.site-header--sticky {
+  position: sticky;
+  top: 0;
+  z-index: 800;
+}
+
+.nav-panel {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+
+.site-header__inner {
+  max-width: 1100px;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  width: 100%;
+}
+
+.nav-burger {
+  display: none;
+  width: 48px;
+  height: 48px;
+  border: none;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.2);
+  cursor: pointer;
+  padding: 8px;
+  align-items: center;
+  justify-content: center;
+}
+
+.nav-burger img {
+  width: 28px;
+  height: 28px;
+  filter: brightness(0) invert(1);
+}
+
+.nav-burger.is-open {
+  background: rgba(255, 255, 255, 0.35);
+}
+
+@media (max-width: 720px) {
+  .nav-burger {
+    display: inline-flex;
+  }
+
+  .nav-panel {
+    position: fixed;
+    top: var(--header-h);
+    left: 0;
+    right: 0;
+    background: linear-gradient(180deg, var(--huggies-deep), #003d66);
+    flex-direction: column;
+    align-items: stretch;
+    padding: 1rem 1.25rem 1.5rem;
+    gap: 0.5rem;
+    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.2);
+    transform: translateY(-120%);
+    opacity: 0;
+    pointer-events: none;
+    transition: transform 0.35s ease, opacity 0.25s ease;
+    z-index: 799;
+  }
+
+  .nav-panel.nav-panel--open {
+    transform: translateY(0);
+    opacity: 1;
+    pointer-events: auto;
+  }
+
+  .nav-panel a {
+    margin: 0 !important;
+    padding: 0.75rem 0.5rem;
+    border-radius: 10px;
+    display: block;
+  }
+
+  .nav-panel a:active {
+    background: rgba(255, 255, 255, 0.1);
+  }
+}
+
+/* Scroll reveal */
+[data-reveal] {
+  opacity: 0;
+  transform: translateY(28px);
+  transition: opacity 0.65s cubic-bezier(0.22, 1, 0.36, 1),
+    transform 0.65s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.reveal--visible,
+.reduce-motion [data-reveal] {
+  opacity: 1;
+  transform: none;
+}
+
+/* Scroll buddy — ребенок выглядывает слева */
+.scroll-buddy {
+  position: fixed;
+  left: 0;
+  bottom: calc(210px + var(--safe-bottom));
+  z-index: 850;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 10px 14px 10px 10px;
+  background: #fff;
+  border-radius: 0 20px 20px 0;
+  box-shadow: 0 10px 36px rgba(0, 102, 179, 0.22);
+  transform: translateX(-110%);
+  transition: transform 0.55s cubic-bezier(0.22, 1, 0.36, 1);
+  max-width: min(240px, 78vw);
+  pointer-events: none;
+}
+
+.scroll-buddy--visible {
+  transform: translateX(0);
+}
+
+.scroll-buddy img {
+  width: 48px;
+  height: 48px;
+  flex-shrink: 0;
+}
+
+.scroll-buddy p {
+  margin: 0;
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--huggies-deep);
+  line-height: 1.3;
+}
+
+@media (max-width: 720px) {
+  .scroll-buddy {
+    bottom: calc(190px + var(--safe-bottom));
+    max-width: 200px;
+    font-size: 0.75rem;
+  }
+}
+
+/* Product card extra interactivity */
+.product-card {
+  position: relative;
+}
+
+.product-card::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: var(--radius);
+  box-shadow: inset 0 0 0 0 rgba(0, 102, 179, 0);
+  pointer-events: none;
+  transition: box-shadow 0.3s ease;
+}
+
+.product-card:hover::after {
+  box-shadow: inset 0 0 0 2px rgba(0, 102, 179, 0.25);
+}
+
+.product-card img {
+  transition: transform 0.45s ease;
+}
+
+.product-card:hover img {
+  transform: scale(1.04);
+}
+
+.reduce-motion .product-card:hover img {
+  transform: none;
+}
+
+/* Крупная кнопка «Задать вопрос»: маскот + подпись */
+.mascot-fab {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.65rem 0.75rem 0.55rem;
+  background: #fff;
+  border-radius: 22px;
+  box-shadow: 0 10px 32px rgba(0, 40, 90, 0.22);
+  max-width: min(240px, 46vw);
+}
+
+.mascot-fab__label {
+  font-size: clamp(0.95rem, 2.8vw, 1.05rem);
+  font-weight: 700;
+  color: var(--huggies-deep);
+  text-align: center;
+  line-height: 1.2;
+}
+
+/* Маскот: PNG с прозрачным фоном — без заливки под картинкой */
+.mascot-brand__frame {
+  width: clamp(120px, 32vw, 168px);
+  height: clamp(120px, 32vw, 168px);
+  border-radius: 0;
+  overflow: visible;
+  border: none;
+  box-shadow: none;
+  background: transparent;
+  transition: transform 0.28s ease;
+}
+
+.mascot-brand:hover .mascot-brand__frame,
+.mascot-brand:focus-visible .mascot-brand__frame {
+  transform: scale(1.05);
+}
+
+.mascot-brand__frame img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  object-position: center bottom;
+  display: block;
+  filter: drop-shadow(0 12px 28px rgba(0, 40, 90, 0.38));
+}
+
+/* Иконки интерфейса: мягкая «подушка», единый стиль */
+img.ui-icon {
+  display: block;
+  padding: 10px;
+  background: linear-gradient(160deg, #fff8f4 0%, #fff 45%, #e8f4fc 100%);
+  border-radius: 18px;
+  box-shadow: 0 2px 14px rgba(0, 82, 140, 0.1);
+  box-sizing: border-box;
+}
+
+.scroll-buddy img.ui-icon {
+  width: 52px !important;
+  height: 52px !important;
+}
+
+/* Чат: быстрые вопросы внутри ленты сообщений (не отдельная шапка панели) */
+.chat-quick {
+  margin: 0 0 0.75rem;
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  align-items: center;
+  max-width: 100%;
+}
+
+.chat-quick__btn {
+  font-size: 0.78rem;
+  padding: 0.4rem 0.7rem;
+  border-radius: 999px;
+  border: 1px solid rgba(0, 102, 179, 0.35);
+  background: #fff;
+  color: var(--huggies-deep);
+  cursor: pointer;
+  line-height: 1.25;
+  text-align: left;
+  transition: background 0.15s ease, border-color 0.15s ease;
+}
+
+.chat-quick__btn:hover {
+  background: rgba(0, 102, 179, 0.08);
+  border-color: rgba(0, 102, 179, 0.55);
+}
+
+.chat-quick__btn:active {
+  transform: scale(0.98);
+}
+
+.msg.bot.typing {
+  opacity: 0.88;
+  font-style: italic;
+  color: var(--muted);
+}
+
+.chat-input-row button:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+/* Chat: mobile full width */
+@media (max-width: 520px) {
+  .chat-overlay {
+    align-items: flex-end;
+    justify-content: stretch;
+    padding: 0;
+    padding-bottom: calc(200px + var(--safe-bottom));
+  }
+
+  .chat-panel {
+    max-width: none;
+    width: 100%;
+    height: min(72vh, 560px);
+    min-height: 0;
+    border-radius: 16px 16px 0 0;
+  }
+}
+
+body {
+  padding-bottom: calc(240px + var(--safe-bottom));
+}
+
+/* Story rings: bigger tap on mobile */
+@media (max-width: 480px) {
+  .story-ring {
+    width: 92px;
+  }
+
+  .story-ring .ring {
+    width: 82px;
+    height: 82px;
+  }
+}
+
+/* Flaticon footer line */
+.flaticon-credit {
+  font-size: 0.75rem;
+  color: var(--muted);
+  margin-top: 0.75rem;
+}
+
+.flaticon-credit a {
+  color: var(--huggies-blue);
+}
+
+/* Section subtitle */
+.section-kicker {
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--huggies-blue);
+  font-weight: 700;
+  margin: 0 0 0.35rem;
+}
+
+/* Mini hero on inner pages */
+.page-hero {
+  background: linear-gradient(135deg, var(--huggies-deep), var(--huggies-blue));
+  color: #fff;
+  border-radius: var(--radius);
+  padding: 1.25rem 1.5rem;
+  margin-bottom: 1.5rem;
+  box-shadow: var(--card-shadow);
+}
+
+.page-hero h1 {
+  margin: 0 0 0.35rem;
+  font-size: 1.35rem;
+}
+
+.page-hero p {
+  margin: 0;
+  opacity: 0.92;
+  font-size: 0.95rem;
+}
+
+/* Уважение к настройке «меньше анимации» */
+.reduce-motion .mascot {
+  animation: none !important;
+}
+
+.reduce-motion .story-viewer .bar-fill {
+  animation: none !important;
+  width: 100% !important;
+}
+
+.reduce-motion .buddy-peek,
+.reduce-motion .scroll-buddy {
+  transition: none !important;
+}

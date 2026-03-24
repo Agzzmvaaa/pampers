@@ -1,0 +1,547 @@
+/* Huggies brand prototype — clean, warm, baby-care aesthetic */
+:root {
+  --huggies-blue: #0066b3;
+  --huggies-deep: #004a82;
+  --huggies-soft: #e8f4fc;
+  --accent: #ff6b35;
+  --text: #1a1a2e;
+  --muted: #5c6470;
+  --card-shadow: 0 8px 32px rgba(0, 102, 179, 0.12);
+  --radius: 16px;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  margin: 0;
+  font-family: "Segoe UI", system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+  color: var(--text);
+  background: linear-gradient(180deg, #f0f7fc 0%, #fff 45%);
+  min-height: 100vh;
+  padding-bottom: 100px;
+}
+
+a {
+  color: var(--huggies-blue);
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
+/* Header */
+.site-header {
+  background: linear-gradient(135deg, var(--huggies-deep), var(--huggies-blue));
+  color: #fff;
+  padding: 0.75rem 1rem;
+  box-shadow: 0 4px 20px rgba(0, 74, 130, 0.25);
+}
+
+.logo {
+  font-weight: 800;
+  font-size: 1.5rem;
+  letter-spacing: -0.02em;
+}
+
+.logo span {
+  opacity: 0.9;
+  font-weight: 600;
+  font-size: 0.85rem;
+  display: block;
+  margin-top: 2px;
+}
+
+.nav a {
+  color: #fff;
+  margin-left: 1.25rem;
+  font-weight: 600;
+  opacity: 0.95;
+}
+
+.nav a:hover {
+  opacity: 1;
+  text-decoration: underline;
+}
+
+/* Container */
+.wrap {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 1.5rem;
+}
+
+/* Stories */
+.stories-section h2 {
+  font-size: 1.35rem;
+  margin: 0 0 1rem;
+  color: var(--huggies-deep);
+}
+
+.stories-strip {
+  display: flex;
+  gap: 1rem;
+  overflow-x: auto;
+  padding: 0.5rem 0 1rem;
+  scrollbar-width: thin;
+  -webkit-overflow-scrolling: touch;
+}
+
+.story-ring {
+  flex: 0 0 auto;
+  width: 86px;
+  cursor: pointer;
+  text-align: center;
+}
+
+.story-ring .ring {
+  width: 76px;
+  height: 76px;
+  margin: 0 auto 6px;
+  border-radius: 50%;
+  padding: 3px;
+  background: linear-gradient(135deg, var(--huggies-blue), #00a8e8, var(--accent));
+  transition: transform 0.2s;
+}
+
+.story-ring:hover .ring {
+  transform: scale(1.05);
+}
+
+.story-ring .ring img {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 3px solid #fff;
+  display: block;
+}
+
+.story-ring .label {
+  font-size: 0.72rem;
+  color: var(--muted);
+  max-width: 86px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* About */
+.about-block {
+  background: #fff;
+  border-radius: var(--radius);
+  padding: 1.75rem;
+  box-shadow: var(--card-shadow);
+  margin: 2rem 0;
+  border: 1px solid rgba(0, 102, 179, 0.08);
+}
+
+.about-block h2 {
+  margin-top: 0;
+  color: var(--huggies-deep);
+  font-size: 1.5rem;
+}
+
+.about-block p {
+  line-height: 1.65;
+  color: var(--text);
+  margin: 0.75rem 0;
+}
+
+/* Products grid */
+.section-title {
+  font-size: 1.35rem;
+  color: var(--huggies-deep);
+  margin: 2rem 0 1rem;
+}
+
+.products-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 1.5rem;
+}
+
+.product-card {
+  background: #fff;
+  border-radius: var(--radius);
+  overflow: hidden;
+  box-shadow: var(--card-shadow);
+  border: 1px solid rgba(0, 102, 179, 0.08);
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.product-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 40px rgba(0, 102, 179, 0.18);
+}
+
+.product-card img {
+  width: 100%;
+  height: 180px;
+  object-fit: cover;
+}
+
+.product-card .body {
+  padding: 1.1rem 1.25rem 1.35rem;
+}
+
+.product-card h3 {
+  margin: 0 0 0.5rem;
+  font-size: 1.1rem;
+  color: var(--huggies-deep);
+}
+
+.product-card p {
+  margin: 0 0 1rem;
+  font-size: 0.92rem;
+  color: var(--muted);
+  line-height: 1.5;
+}
+
+.btn {
+  display: inline-block;
+  background: linear-gradient(135deg, var(--huggies-blue), var(--huggies-deep));
+  color: #fff !important;
+  padding: 0.55rem 1.1rem;
+  border-radius: 999px;
+  font-weight: 600;
+  font-size: 0.9rem;
+  border: none;
+  cursor: pointer;
+  text-decoration: none !important;
+}
+
+.btn:hover {
+  filter: brightness(1.08);
+}
+
+/* Product detail page */
+.breadcrumb {
+  font-size: 0.85rem;
+  color: var(--muted);
+  margin-bottom: 1rem;
+}
+
+.product-detail {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2rem;
+  align-items: start;
+  background: #fff;
+  padding: 2rem;
+  border-radius: var(--radius);
+  box-shadow: var(--card-shadow);
+}
+
+.product-detail img {
+  width: 100%;
+  border-radius: 12px;
+  max-height: 380px;
+  object-fit: cover;
+}
+
+.product-detail h1 {
+  margin: 0 0 1rem;
+  color: var(--huggies-deep);
+}
+
+.product-detail .lead {
+  font-size: 1.05rem;
+  line-height: 1.6;
+  color: var(--text);
+}
+
+@media (max-width: 768px) {
+  .product-detail {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Story viewer modal */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.88);
+  z-index: 1000;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+}
+
+.modal-overlay.open {
+  display: flex;
+}
+
+.story-viewer {
+  max-width: 420px;
+  width: 100%;
+  aspect-ratio: 9/16;
+  max-height: 85vh;
+  border-radius: 12px;
+  overflow: hidden;
+  position: relative;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+}
+
+.story-viewer img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.story-viewer .bar {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: rgba(255, 255, 255, 0.3);
+}
+
+.story-viewer .bar-fill {
+  height: 100%;
+  background: #fff;
+  width: 0%;
+  animation: storyProgress 5s linear forwards;
+}
+
+@keyframes storyProgress {
+  to {
+    width: 100%;
+  }
+}
+
+.story-viewer .close-x {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  background: rgba(0, 0, 0, 0.5);
+  color: #fff;
+  border: none;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  cursor: pointer;
+  font-size: 1.25rem;
+  line-height: 1;
+}
+
+.story-viewer .caption {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: 1.25rem;
+  background: linear-gradient(transparent, rgba(0, 0, 0, 0.75));
+  color: #fff;
+  font-size: 0.95rem;
+}
+
+/* Feather mascot */
+.mascot {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  z-index: 900;
+  cursor: pointer;
+  filter: drop-shadow(0 8px 24px rgba(0, 102, 179, 0.35));
+  animation: floaty 3s ease-in-out infinite;
+}
+
+@keyframes floaty {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-8px);
+  }
+}
+
+.mascot-brand:focus-visible {
+  outline: none;
+}
+
+.mascot-brand:focus-visible .mascot-fab {
+  outline: 3px solid rgba(0, 102, 179, 0.55);
+  outline-offset: 4px;
+}
+
+/* Кнопка маскота: картинка задается в enhancements.css (.mascot-brand__frame) */
+
+/* AI Chat panel */
+.chat-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.45);
+  z-index: 950;
+  display: none;
+  align-items: flex-end;
+  justify-content: flex-end;
+  padding: 1rem;
+  padding-bottom: 220px;
+}
+
+.chat-overlay.open {
+  display: flex;
+}
+
+.chat-panel {
+  width: 100%;
+  max-width: 400px;
+  height: min(520px, 70vh);
+  min-height: 0;
+  background: #fff;
+  border-radius: var(--radius);
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  border: 1px solid rgba(0, 102, 179, 0.15);
+}
+
+/* Шапка, подсказки и поле ввода не сжимаются — скролл только у .chat-messages */
+.chat-header,
+.chat-settings,
+.chat-input-row,
+.chat-footer-note {
+  flex-shrink: 0;
+}
+
+.chat-header {
+  background: linear-gradient(135deg, var(--huggies-deep), var(--huggies-blue));
+  color: #fff;
+  padding: 0.85rem 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+}
+
+.chat-header h3 {
+  margin: 0;
+  font-size: 1rem;
+}
+
+.chat-header small {
+  opacity: 0.85;
+  font-weight: 400;
+}
+
+.chat-header button {
+  background: rgba(255, 255, 255, 0.2);
+  border: none;
+  color: #fff;
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 1.1rem;
+}
+
+.chat-messages {
+  flex: 1 1 0%;
+  min-height: 0;
+  overflow-y: auto;
+  overflow-x: hidden;
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior: contain;
+  padding: 1rem;
+  background: var(--huggies-soft);
+}
+
+.msg {
+  max-width: 88%;
+  padding: 0.65rem 0.9rem;
+  border-radius: 12px;
+  margin-bottom: 0.65rem;
+  font-size: 0.9rem;
+  line-height: 1.45;
+}
+
+.msg.user {
+  background: var(--huggies-blue);
+  color: #fff;
+  margin-left: auto;
+  border-bottom-right-radius: 4px;
+}
+
+.msg.bot {
+  background: #fff;
+  color: var(--text);
+  border: 1px solid rgba(0, 102, 179, 0.12);
+  border-bottom-left-radius: 4px;
+}
+
+.chat-input-row {
+  display: flex;
+  gap: 8px;
+  padding: 0.75rem;
+  background: #fff;
+  border-top: 1px solid #e0e8ef;
+}
+
+.chat-input-row input {
+  flex: 1;
+  border: 1px solid #cde;
+  border-radius: 999px;
+  padding: 0.55rem 1rem;
+  font-size: 0.9rem;
+  outline: none;
+}
+
+.chat-input-row input:focus {
+  border-color: var(--huggies-blue);
+}
+
+.chat-input-row button {
+  background: var(--huggies-blue);
+  color: #fff;
+  border: none;
+  border-radius: 999px;
+  padding: 0.55rem 1rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.chat-footer-note {
+  font-size: 0.7rem;
+  color: var(--muted);
+  padding: 0 0.75rem 0.5rem;
+  text-align: center;
+}
+
+.chat-settings {
+  padding: 0.5rem 1rem;
+  font-size: 0.75rem;
+  background: #fff8e6;
+  border-bottom: 1px solid #ffe0a3;
+  color: #664;
+}
+
+.chat-settings label {
+  display: block;
+  margin-bottom: 4px;
+}
+
+.chat-settings input[type="password"] {
+  width: 100%;
+  padding: 6px 8px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  font-size: 0.8rem;
+}
+
+.site-footer {
+  text-align: center;
+  padding: 2rem;
+  color: var(--muted);
+  font-size: 0.85rem;
+}
